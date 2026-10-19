@@ -1,18 +1,106 @@
-# BitBoxApp
+# BitBox's Design Playground
 
-![BitBoxApp Screenshot](./docs/assets/app-screen.png)
+An experimental fork of [BitBoxApp](https://github.com/BitBoxSwiss/bitbox-wallet-app)
+for exploring desktop design without editing code for every visual adjustment.
+This is a design playground and proof of concept, not an official BitBoxApp release.
+Its purpose is to compare ideas, share presets and decide which changes merit
+separate proposals to the production app.
 
-This repo contains the source code for the BitBoxApp and related tools.
+## What this fork explores
 
-Contributions are very welcome.
-Please see the [contribution guidelines](CONTRIBUTING.md).
+- Live color palettes, gradients, shapes, borders, card/button shadows and motion.
+- Shared layout settings with separate light and dark color palettes.
+- Header and logo placement, sidebar sizing, scrollbars and optional scroll-edge effects.
+- A live component preview, reset controls and JSON preset import/export.
+- Client-side window decorations (CSD), integrated headers and guide panels, and
+  previews of Windows, macOS and two Linux window-button layouts.
+
+The focus is desktop presentation and interaction. This playground is not a
+wallet feature redesign or a mobile redesign. The broader collection of design
+controls is experimental; individual improvements can be evaluated independently
+before considering them for upstream adoption.
+
+## Try the playground
+
+Download an **experimental prerelease** from this fork's [Releases](https://github.com/pakovm-git/bitboxapp-design-playground/releases).
+Linux packages are provided as AppImage, DEB and RPM; Windows has an installer.
+No macOS binary is available in this preview.
+
+1. Close any running BitBoxApp, then open the playground build.
+2. Open **Settings → Playground** and use the live preview while adjusting controls.
+3. Export/import a JSON preset to share the in-app design profiles. Native
+   window preferences are separate from those presets.
+4. To try CSD, turn off **Use system window borders** and restart the app.
+   System borders are the default for fresh settings. Existing choices are retained.
+   The in-app design controls remain available with either decoration mode.
+
+Window-button presets change appearance and placement while retaining the host
+operating system's window actions. **System default** uses that system's controls
+and follows desktop button preferences on Linux. Ubuntu/Mint previews minimize,
+maximize and close on the right; Fedora/Debian previews close only. These are
+layout preset names, not guarantees about every installation of those distributions.
+
+### Startup and data
+
+These packages retain the BitBoxApp application name, version (currently 4.52.0),
+package identity and settings/profile locations. They do not create an isolated
+playground installation. Installing a package can replace the existing BitBoxApp
+package, and saved design settings can remain in the shared profile.
+
+Normal launch uses **mainnet**, unless testnet is requested or a saved one-shot
+startup setting selects it. The documented `-testnet` flag changes the network;
+it does **not** create a separate data directory. Backend data normally lives in
+`%APPDATA%\bitbox` on Windows and `~/.config/bitbox` on Linux (or
+`$XDG_CONFIG_HOME/bitbox` when applicable). Qt settings and the WebEngine profile
+also use the usual BitBoxApp identities. Use these experimental builds for design
+evaluation rather than production wallet use.
+
+## Added desktop dependency
+
+CSD uses the pinned, vendored [QWindowKit](https://github.com/stdware/qwindowkit)
+Core/Widgets libraries. It provides a shared foundation for native window
+integration instead of duplicating the platform machinery in this fork.
+The Qt host still owns the WebEngine integration, controls and Linux rendering;
+desktop preferences and compositor behavior remain platform-dependent.
+
+The dependency is built statically with CMake alongside the Qt/qmake build.
+Source pins, bundled dependencies, license notices and downstream integration
+patches are documented in [BITBOX-DEPENDENCY.md](frontends/qt/external/qwindowkit/BITBOX-DEPENDENCY.md).
+The web appearance controls use the existing frontend stack without a new styling
+framework. See [desktop build notes](docs/BUILD.md#desktop-decorations) for details.
+
+## Validation and scope limits
+
+The first preview's Linux and Windows binaries were built from commit `0ff7a623a`.
+Linux checks passed on X11 and Wayland (29 native tests on each), along with
+15 focused frontend settings tests and frontend lint/type checks. The Windows
+build compiled successfully and was manually tested by the fork maintainer.
+The packaging commands themselves do not run tests.
+
+The native macOS implementation and switching between native traffic lights and
+simulated controls have not been compiled or verified on a Mac. Automated checks
+and manual design testing do not establish production readiness, complete
+accessibility coverage or a security audit of this fork.
+
+[Design comparisons](docs/desktop-modernization/README.md) explain the supporting
+UI changes. Those figures are generated mockups, not runtime screenshots or
+validation evidence. Build instructions and the remaining development reference
+below are inherited from upstream unless otherwise noted.
+
+## Upstream application reference
+
+![Upstream BitBoxApp screenshot](./docs/assets/app-screen.png)
+
+Contributions should distinguish playground experiments from changes intended for
+production. See the [contribution guidelines](CONTRIBUTING.md).
 
 ## Tech stack
 
 The wallet UI is a [React](https://reactjs.org/) single page webapp. It sources its data from the
 backend written in Go.
 
-The Desktop app is a C++ Qt program containing only a `WebEngineView`, displaying the UI.
+The desktop app is a C++ Qt host displaying the UI in a `WebEngineView`, with
+QWindowKit handling the shared native CSD foundation.
 
 Static assets are sourced from a Qt rcc file, and the dynamic data is bridged from Go with
 WebChannels.

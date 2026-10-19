@@ -48,12 +48,17 @@ Controls share the app's fixed header; scrolling and desktop banners
 start below it. Only occupied left/right control slots reserve space, and one
 centering rule aligns the logo, heading, Guide and controls. Standard captions
 are 70px high by default. System window borders are the default; existing saved
-choices remain respected. Linux's design playground can switch live between
-system/Linux captions (following desktop button preferences), simulated macOS
-traffic lights on the left, and simulated Windows captions on the right.
-These previews retain Linux's native actions; they do not emulate AppKit or Snap
-Layouts. An optional separate custom titlebar reserves a controls row above the
-app's headings. The web view fills the whole window body, so panel colors,
+choices remain respected. The design playground can switch button previews live
+on all desktop platforms. System default follows the host's controls, including
+Linux desktop button preferences and native macOS traffic lights. Other presets
+show simulated macOS traffic lights on the left, Windows captions on the right,
+Ubuntu/Mint's three-button layout or Fedora/Debian's close-only layout. macOS
+hides native traffic lights while a simulated preset is selected and restores
+them for System default. Previews retain the host's window actions rather than
+emulating another operating system. Windows compilation and manual testing passed;
+macOS compilation and runtime behavior remain unverified. On Linux, an optional
+separate custom titlebar reserves a controls row above the app's headings.
+The web view fills the whole window body, so panel colors,
 gradients, dimming and animations extend through this row in the same composition.
 There is no duplicate centered title or separately painted titlebar background.
 QWindowKit handles dragging within the controls row; web dismiss overlays remain

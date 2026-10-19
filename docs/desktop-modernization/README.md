@@ -24,23 +24,27 @@ startup rendering or live resizing. Use native runtime captures and recordings
 for those checks. Raw user screenshots and recordings are intentionally not
 included here because some contain other desktop content.
 
-The complete implementation is available on `desktop-modernization-effort`.
+The current playground is available on `bitboxapp-design-playground`.
+`desktop-modernization-effort` remains as the earlier upstream proposal branch.
 The CSD-only comparison branch preserves upstream UI layout and styling so
 engineers can observe which integration gaps the shared changes address.
 
 ## Local appearance playground
 
-On `codex/desktop-modernization-optimized`, open Settings → General → Appearance
-→ Design playground (PoC). Colors, gradients, button/input/card shapes, inner
-borders, card/button shadows, separators, scrollbar appearance and panel/button
-animation timing update live. Light and dark appearances are saved separately
-in the WebEngine profile's local storage; Reset current appearance clears the
-current theme's overrides. Header height and logo visibility use the existing
-Qt settings and are shared between themes. Hiding or scaling the logo preserves
-its space, and scrollbar thumb width changes retain the same gutter.
+Open **Settings → Playground** on `bitboxapp-design-playground`. Colors, gradients,
+button/input/card shapes, borders, card/button shadows, separators, scrollbar
+appearance and motion update live. Shapes and layout options are shared between
+themes; light and dark palettes remain separate. Reset controls and JSON preset
+import/export support comparing and sharing designs. Header height and logo
+visibility use Qt settings; the remaining design profiles use WebEngine storage.
 
-Use system window borders requires a restart and disables the custom window
-behavior while retaining the modernized web design and appearance controls.
-The playground does not customize the OS frame or shadow, and adds no dependency.
-Custom palettes may reduce contrast. Reduced-motion and forced-color system
-preferences take precedence over custom animation and scrollbar styling.
+**Use system window borders** requires a restart and disables custom window
+behavior while retaining the in-app design and appearance controls. Window-button
+previews are available across desktop platforms; native macOS switching is still
+unverified. The web appearance controls add no new styling dependency; the CSD
+implementation uses vendored QWindowKit. Custom palettes may reduce contrast.
+Reduced-motion and forced-color system preferences take precedence over custom
+animation and scrollbar styling.
+
+See the [fork README](../../README.md) for experimental scope, downloads, startup
+and shared-data behavior, and the limits of the available validation.
