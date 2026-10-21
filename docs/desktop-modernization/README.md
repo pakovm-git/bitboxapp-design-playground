@@ -48,3 +48,77 @@ animation and scrollbar styling.
 
 See the [fork README](../../README.md) for experimental scope, downloads, startup
 and shared-data behavior, and the limits of the available validation.
+
+## Structured layout editor
+
+In **Settings → Playground**, open **Screen previews and component kit**, then
+**Open layout editor**. The panel stays available when navigating the desktop app.
+Choose a section group, drag its sections or use the up/down buttons, and select
+one or two columns for Portfolio and account screens. Each section can occupy
+the left column, right column, or full width. Below 1080px of available content
+width, columns stack in the saved reading order.
+
+**Select an element** picks a named part without activating the control beneath
+it; Escape cancels selection. Element controls cover typography, spacing, icon
+sizes, borders, colors, alignment and inline/stacked arrangements. A change to
+a repeated part, such as transaction rows, applies to all matching parts on the
+supported screens. Global typography, content spacing, row density and button
+size controls remain alongside the existing appearance settings.
+
+Row groups can also reorder transaction icons, notes/status, amounts and the
+details button. Balance values can put the crypto or fiat amount first.
+
+The supported surfaces are the sidebar, Portfolio, account overview/actions,
+account activity, transaction details, and the component kit. The editor retains
+the current app design as its starting point. **Use Calm cards design** applies
+the colleague's card surfaces, column layout and stacked account balance as a
+starting point. Other screens retain their existing flows. Ordinary browser and
+mobile sessions do not apply these desktop layout profiles.
+
+Previews contain sample data and inactive wallet actions. Their chart is an
+illustration, while balances, transaction rows, transaction headers, badges and
+form controls use the app's components. Loading, empty, error, hidden-amount,
+pending and failed examples can be selected without a device.
+
+**Reference design → Calm cards** uses components copied from
+[the colleague's source at f0bbec3ba](https://github.com/shonsirsha/bitbox-wallet-app/tree/f0bbec3ba/frontends/web/src/prototype).
+The imported kit lives in `components/desktop-design/calm-cards/kit`; the reference
+compositions expose the same named parts as the live app. These samples have fixed
+display values and an illustrative chart. No prototype backend, request interception,
+router replacement, or frontend wallet calculations are installed. The live Portfolio
+activity feed reads existing account APIs, refreshes on transaction notifications,
+reports load failures and opens the selected account. Real account actions retain
+their existing availability and device connection checks. Swap and Info action
+examples belong to the reference screens only.
+
+The live wallet adapts the concept to the existing components and desktop frame;
+it does not replace the app with the colleague's throwaway prototype. Full reset
+restores the original starting design. Applying the template is also reversible
+through editor undo. Editor layout changes are covered by undo; global appearance
+changes continue to use their existing reset controls.
+
+Layout and geometry are shared across themes; element colors remain separate
+for light and dark appearances. Undo/redo covers the last 30 editor changes in
+the current session. Element reset clears its overrides in both themes; palette
+reset clears the current theme's colors; full reset also clears editor layouts.
+Profiles persist in WebEngine storage under `bitbox.desktop-design`, independently
+of wallet settings and native chrome preferences.
+
+Export now writes version 2 of `bitbox-design`, containing the appearance
+`profiles` and editor `design`. Version 1 imports still work and clear editor
+overrides. Older builds cannot import version 2. Export contains design settings
+only. Inputs are restricted to registered part IDs, known layout placements and
+bounded style fields; presets cannot inject arbitrary CSS or remove controls.
+
+The registry is in `frontends/web/src/utils/desktop-design.ts`. Layouts use
+explicit keyed React items so moving a section preserves its state and updates
+DOM order. Add parts to this registry and the English labels, then attach their
+attributes inside a design scope. The editor is mounted separately from the
+native chrome controller so those modules do not depend on one another.
+
+Validation passed: 731 frontend tests in 108 files, frontend lint/type checking,
+and browser checks with the native bridge mocked at wide and narrow widths.
+Linux x86_64 AppImage, Debian and RPM testing packages were built with the project
+helper and their checksums verified. The packaged app was not launched; native
+window behavior and hardware interaction still require testing. macOS compilation
+and runtime remain unverified; see the [macOS build handoff](macos-build.md).
