@@ -1,0 +1,154 @@
+.layout,
+.block {
+    display: contents;
+}
+
+.layout:not([data-design-columns="original"]) {
+    display: grid;
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-half);
+    min-width: 0;
+}
+
+.layout:not([data-design-columns="original"]) > .block {
+    display: block;
+    min-width: 0;
+    grid-column: 1 !important;
+}
+
+@container (min-width: 1080px) {
+    .layout[data-design-columns="wideLeft"] {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+    .layout[data-design-columns="wideRight"] {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+    .layout[data-design-columns="equal"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .layout:is([data-design-columns="wideLeft"], [data-design-columns="wideRight"], [data-design-columns="equal"]) > .block {
+        grid-column: var(--design-block-column) !important;
+    }
+}
+
+.panel {
+    position: fixed;
+    z-index: 9500;
+    right: var(--space-half);
+    bottom: var(--space-half);
+    width: min(370px, calc(100vw - 32px));
+    max-height: calc(100dvh - var(--header-height) - 32px);
+    overflow: auto;
+    scrollbar-gutter: stable;
+    padding: var(--space-half);
+    border: 1px solid var(--color-secondary);
+    border-radius: var(--radius-xl);
+    background: var(--background-secondary);
+    color: var(--color-default);
+    box-shadow: 0 8px 32px rgb(0 0 0 / 20%);
+    font-size: 14px;
+}
+
+.panel h2 {
+    font-size: 18px;
+    margin: 0;
+}
+
+.toolbar,
+.actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.toolbar {
+    position: sticky;
+    top: -16px;
+    z-index: 1;
+    background: var(--background-secondary);
+    padding-block: 8px;
+    justify-content: space-between;
+}
+
+.panel button {
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.panel :is(button, input, select):focus-visible {
+    outline: 2px solid var(--design-focus, var(--color-electric-blue));
+    outline-offset: 2px;
+}
+
+.panel p {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-block: 12px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.field input,
+.field select {
+    min-height: 36px;
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+}
+
+.blocks {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+}
+
+.blocks li {
+    padding: 8px;
+    margin-bottom: 6px;
+    border: 1px solid var(--color-disabled);
+    border-radius: 6px;
+}
+
+.blockName {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.blockName button {
+    flex: 1;
+    min-width: 0;
+    text-align: start;
+}
+
+.grip {
+    cursor: grab;
+    flex-shrink: 0;
+}
+
+.blocks select {
+    width: 100%;
+    margin-top: 8px;
+}
+
+:global(body[data-design-picking]) :global([data-design-scope]) :global([data-design-element]):hover {
+    outline: 2px dashed var(--color-blue);
+    outline-offset: 2px;
+    cursor: crosshair;
+}
