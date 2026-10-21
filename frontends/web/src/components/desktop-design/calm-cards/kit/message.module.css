@@ -1,0 +1,23 @@
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--k-radius-l);
+  background: var(--k-accent-soft);
+  color: var(--k-text);
+}
+
+.icon { flex: none; margin-top: 1px; color: var(--k-accent-ink); }
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.title { font-weight: 600; }
+
+.text { font-size: var(--k-fs-small); color: var(--k-text-2); }
