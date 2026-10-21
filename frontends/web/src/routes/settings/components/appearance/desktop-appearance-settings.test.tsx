@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { afterEach, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { desktopDesignSnapshot, saveDesktopDesign } from '@/utils/desktop-design';
 import { useDesktopChrome } from '@/components/desktop-chrome/desktop-chrome';
 import { useDarkmode } from '@/hooks/darkmode';
 import { applyAppearance, readAppearance, saveAppearance, serializeAppearancePreset } from '@/utils/desktop-appearance';
@@ -9,24 +10,40 @@ import { setPreviewButtonStyle, setPreviewHeaderHeight, setPreviewLogoVisible, s
 import { saveDesktopAppearancePreset } from '@/utils/transport-qt';
 import { DesktopAppearanceSettings } from './desktop-appearance-settings';
 
-vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }) }));
 vi.mock('@/hooks/darkmode', () => ({ useDarkmode: vi.fn(() => ({ isDarkMode: false, toggleDarkmode: vi.fn() })) }));
 vi.mock('@/hooks/mediaquery', () => ({ useMediaQuery: () => false }));
+vi.mock('@/i18n/i18n', () => ({ i18n: { language: 'en' } }));
 vi.mock('@/components/desktop-chrome/desktop-chrome', () => ({
+  useDesktopModernized: () => true,
   useDesktopChrome: vi.fn(() => ({ csd: true, nativeDecorations: false, activeNativeDecorations: false, previewSeparateTitlebar: false, previewHeaderHeight: 70, previewLogoVisible: true, previewButtonStyle: 'system' })),
 }));
 vi.mock('@/utils/desktop-chrome', () => ({ setPreviewHeaderHeight: vi.fn(), setPreviewLogoVisible: vi.fn(), setPreviewButtonStyle: vi.fn(), setNativeDecorations: vi.fn(), setPreviewSeparateTitlebar: vi.fn(), notifyChromeLayout: vi.fn() }));
 vi.mock('@/utils/transport-qt', () => ({ saveDesktopAppearancePreset: vi.fn().mockResolvedValue('saved') }));
 
 afterEach(() => {
+  cleanup();
   vi.mocked(useDesktopChrome).mockReset();
   vi.restoreAllMocks();
   vi.clearAllMocks();
   vi.mocked(saveDesktopAppearancePreset).mockResolvedValue('saved');
   vi.mocked(useDarkmode).mockReturnValue({ isDarkMode: false, toggleDarkmode: vi.fn() });
+  saveDesktopDesign({ layouts: {}, elements: {} });
   localStorage.clear();
   document.body.removeAttribute('style');
   document.body.removeAttribute('data-desktop-scroll-edge-effect');
+});
+
+// Palette reset clears the current theme's element colors while retaining the other theme and shared geometry.
+it('resets element colors together with the selected palette', () => {
+  saveDesktopDesign({ layouts: {}, elements: { balance: { fontSize: 32 } }, colors: {
+    light: { balance: { color: '#123456' } }, dark: { balance: { color: '#abcdef' } },
+  } });
+  render(<DesktopAppearanceSettings />);
+  fireEvent.click(screen.getByRole('button', { name: 'desktopDesign.reset' }));
+  expect(desktopDesignSnapshot().design).toEqual({ layouts: {}, elements: { balance: { fontSize: 32 } }, colors: {
+    light: {}, dark: { balance: { color: '#abcdef' } },
+  } });
 });
 
 const open = (group: string) => fireEvent.click(screen.getByRole('button', { name: group }));
@@ -290,7 +307,7 @@ it('edits card and button shadow strength independently', () => {
   expect(setNativeDecorations).not.toHaveBeenCalled();
 });
 
-// Export includes both design palettes, handles cancellation/failure, and never exports wallet or window settings.
+// Export includes palettes and editor overrides, handles cancellation/failure, and excludes wallet and window settings.
 it('exports an in-app design preset through the native save dialog', async () => {
   saveAppearance('light', { accent: '#abcdef', cardShadow: 8 });
   saveAppearance('dark', { accent: '#123456', cardShadow: 8 });
@@ -299,7 +316,7 @@ it('exports an in-app design preset through the native save dialog', async () =>
   fireEvent.click(button);
   await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('desktopDesign.presets.saved'));
   const preset = JSON.parse(vi.mocked(saveDesktopAppearancePreset).mock.calls[0]![0]);
-  expect(preset).toEqual({ format: 'bitbox-design', version: 1, profiles: readAppearance() });
+  expect(preset).toEqual({ format: 'bitbox-design', version: 2, profiles: readAppearance(), design: { layouts: {}, elements: {} } });
   vi.mocked(saveDesktopAppearancePreset).mockResolvedValueOnce('cancelled');
   fireEvent.click(button);
   await waitFor(() => expect(button).not.toBeDisabled());

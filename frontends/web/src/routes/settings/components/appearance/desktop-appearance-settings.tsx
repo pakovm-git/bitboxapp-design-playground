@@ -11,10 +11,11 @@ import { SettingsItem } from '../settingsItem/settingsItem';
 import { DesktopButtonStyleSetting, DesktopHeaderHeightSetting, DesktopLogoSetting, DesktopSeparateTitlebarSetting } from './desktop-preview-settings';
 import styles from './desktop-preview-settings.module.css';
 import { DesktopAppearancePresets } from './desktop-appearance-presets';
-import { DesktopAppearancePreview } from './desktop-appearance-preview';
 import { NativeDecorationsSetting } from './native-decorations-setting';
+import { desktopDesignSnapshot, saveDesktopDesign } from '@/utils/desktop-design';
+import { DesktopDesignPreview } from '@/components/desktop-design/desktop-design-preview';
 
-const groups = ['palette', 'main', 'sidebar', 'guide', 'button', 'card', 'input', 'switch', 'effects', 'scrollbars', 'motion'];
+const groups = ['palette', 'typography', 'layout', 'main', 'sidebar', 'guide', 'button', 'card', 'input', 'switch', 'effects', 'scrollbars', 'motion'];
 
 export const DesktopAppearanceSettings = () => {
   const { t } = useTranslation();
@@ -92,9 +93,10 @@ export const DesktopAppearanceSettings = () => {
         <Button secondary onClick={() => {
           const lightSaved = saveAppearance('light', {});
           const darkSaved = saveAppearance('dark', {});
+          const designSaved = saveDesktopDesign({ layouts: {}, elements: {} });
           setProfiles({ light: {}, dark: {} });
           applyAppearance({}, mode);
-          setSaveFailed(!lightSaved || !darkSaved);
+          setSaveFailed(!lightSaved || !darkSaved || !designSaved);
           setDraft(undefined);
           setPreviewHeaderHeight(70);
           setNativeDecorations(true);
@@ -107,21 +109,26 @@ export const DesktopAppearanceSettings = () => {
           appearanceFields.filter(field => field.type === 'color').forEach(field => delete next[field.id]);
           update(next);
           setDraft(undefined);
+          const design = desktopDesignSnapshot().design;
+          if (design.colors?.[mode] && !saveDesktopDesign({ ...design, colors: { ...design.colors, [mode]: {} } })) {
+            setSaveFailed(true);
+          }
         }}>{t('desktopDesign.reset')}</Button>
       </div>
       <DesktopAppearancePresets profiles={profiles} onImport={preset => {
         if (!saveAppearanceProfiles(preset.profiles)) {
           return false;
         }
+        const designSaved = saveDesktopDesign(preset.design);
         setProfiles(preset.profiles);
         applyAppearance(preset.profiles[mode], mode);
         setDraft(undefined);
-        setSaveFailed(false);
-        return true;
+        setSaveFailed(!designSaved);
+        return designSaved;
       }} />
       {saveFailed && <p role="alert">{t('desktopDesign.saveFailed')}</p>}
-      <Accordion className={styles.preview} title={t('desktopDesign.preview.title')} defaultOpen>
-        <DesktopAppearancePreview />
+      <Accordion className={styles.section} title={t('desktopDesign.editor.previewTitle')} defaultOpen>
+        <DesktopDesignPreview appearance={values} />
       </Accordion>
       <Accordion className={styles.section} title={t('desktopDesign.header')}>
         <NativeDecorationsSetting />

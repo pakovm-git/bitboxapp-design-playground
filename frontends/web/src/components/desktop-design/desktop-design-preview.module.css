@@ -1,0 +1,54 @@
+.preview {
+    margin-block: var(--space-half);
+    padding-block: var(--space-half);
+    border-block: 1px solid var(--color-disabled);
+}
+
+.toolbar,
+.actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-half);
+    margin-block: var(--space-half);
+}
+
+.toolbar > div {
+    flex: 1;
+    min-width: min(100%, 180px);
+    width: auto;
+}
+
+.canvas {
+    container-type: inline-size;
+    min-height: 200px;
+    padding: var(--space-half);
+    background: var(--background);
+    border-radius: var(--radius-xl);
+    overflow: auto;
+}
+
+.card {
+    margin-bottom: var(--space-half);
+    padding: var(--space-half);
+    background: var(--background-secondary);
+    border-radius: var(--radius-xl);
+}
+
+.chart {
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    margin-top: var(--space-half);
+    color: var(--color-blue);
+}
+
+.sidebar {
+    max-width: 320px;
+    padding: var(--space-half);
+    border: 1px solid var(--color-disabled);
+}
+
+.sidebar svg {
+    max-width: 160px;
+}

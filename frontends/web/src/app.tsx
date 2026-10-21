@@ -27,6 +27,7 @@ import { BottomNavigation } from './components/bottom-navigation/bottom-navigati
 import { getBottomNavKey } from './components/bottom-navigation/utils';
 import styles from './app.module.css';
 import { DesktopChrome } from './components/desktop-chrome/desktop-chrome';
+import { DesktopDesign } from './components/desktop-design/desktop-design-editor';
 import { DesktopStartup } from './components/desktop-chrome/desktop-startup';
 
 const AppFrame = () => {
@@ -107,6 +108,7 @@ export const App = () => {
       <Providers>
         <Darkmode />
         <DesktopChrome />
+        <DesktopDesign />
         <AppNavigation />
         <AppNotifications />
         <DesktopStartup>
