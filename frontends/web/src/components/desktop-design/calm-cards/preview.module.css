@@ -1,0 +1,61 @@
+.reference {
+    padding: 24px;
+    border-radius: 20px;
+    container-type: inline-size;
+}
+
+.reference [data-design-element="pageHeader"] { margin-bottom: 24px; }
+.reference [data-design-element="balanceAmountLayout"] { display: flex; flex-direction: column; align-items: start; gap: 10px; }
+.reference [data-design-element="accountOverviewLayout"] { display: flex; flex-direction: column; gap: 24px; }
+.reference :is([data-design-element="accountLayout"], [data-design-element="portfolioLayout"]) { display: grid; gap: var(--calm-layout-gap, 24px); }
+.reference [data-design-element="accountActionsLayout"] { display: flex; justify-content: space-around; gap: 8px; }
+.reference :is([data-design-element="portfolioChart"], [data-design-element="portfolioAssets"], [data-design-element="portfolioActivity"], [data-design-element="accountOverview"], [data-design-element="accountActivity"]) {
+    background: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+@container (min-width: 1080px) {
+    .reference [data-design-element="portfolioLayout"][data-design-columns="original"] { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+    .reference [data-design-element="portfolioLayout"]:is([data-design-columns="original"], [data-design-columns="wideLeft"]) > [data-design-element="portfolioActivity"] { grid-column: 2; grid-row: 1 / span 3; }
+    .reference [data-design-element="portfolioLayout"][data-design-columns="original"] > :not([data-design-element="portfolioActivity"]) { grid-column: 1; }
+    .reference [data-design-element="accountLayout"][data-design-columns="original"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr); }
+}
+
+.balance { margin-top: 24px; }
+.accountCard { --k-fs-hero: 36px; }
+.meta { display: flex; gap: 10px; margin-block: 10px 20px; color: var(--k-text-2); font-size: 13px; }
+.actions { --k-surface-2: var(--k-surface); }
+.assetCards { display: grid; gap: 12px; }
+.listCard { --k-section-pad: 8px; --k-row-divider: none; }
+.txRow { padding: 12px; min-width: 0; }
+.txRow [data-design-element="transactionRowLayout"] { display: flex; align-items: center; gap: 12px; }
+.txRow :is([data-design-element="transactionInfo"], [data-design-element="transactionAmounts"]) { display: block; min-width: 0; }
+.txRow [data-design-element="transactionInfo"] { flex: 1; }
+.txInfo { display: flex; flex-direction: column; gap: 4px; }
+.txInfo small { font-size: 13px; color: var(--k-text-2); }
+.txAmounts { display: flex; flex-direction: column; align-items: end; gap: 4px; }
+.details { --k-row-pad-x: 0; }
+.detailHero { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 24px; }
+.sidebar {
+    max-width: 280px;
+    padding: 20px;
+    background: #1d1d1b;
+    border-radius: 20px;
+    --k-text: #f5f5f5;
+    --k-text-2: #999;
+    --k-row-divider: none;
+    --k-surface-2: #333;
+}
+.sidebar [data-design-element="sidebarLogo"] { display: grid; gap: 24px; margin-bottom: 24px; }
+.sidebarNav { display: grid; gap: 24px; padding-block: 12px 24px; }
+.sidebarNav span, .sidebarService { display: flex; align-items: center; gap: 12px; }
+.sidebarService { padding-block: 24px 0; }
+.kit { display: grid; gap: 24px; }
+.kitControls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.activityTitle { font-size: 15px; font-weight: 600; margin: 0 0 16px; }
+.recent { max-height: 500px; overflow-y: auto; }
+.liveRow { display: flex; align-items: center; gap: 12px; padding: 14px 0; color: inherit; }
+.liveRow > span:nth-child(2) { flex: 1; min-width: 0; }
+.liveRow > span:last-child { text-align: end; }
+.liveRow small { display: block; color: var(--color-secondary); font-size: 12px; margin-top: 4px; }

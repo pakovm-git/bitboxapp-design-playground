@@ -1,0 +1,92 @@
+/* Calm cards from shonsirsha/bitbox-wallet-app, f0bbec3ba.
+   These rules adapt its surfaces to the existing wallet components. */
+body[data-desktop-modernized][data-design-template="calmCards"]:not(.proto-root *) {
+    --background-dark: #1d1d1b;
+    --background-secondary: #fff;
+    --radius-xl: 20px;
+    --design-sidebar-text: #f5f5f5;
+    --design-button-radius: 24px;
+    --design-row-height: 60px;
+}
+
+body.dark-mode[data-desktop-modernized][data-design-template="calmCards"]:not(.proto-root *) {
+    --background-dark: #161615;
+    --background-secondary: #262624;
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] :is(
+    [data-design-element="portfolioChart"],
+    [data-design-element="portfolioAssets"],
+    [data-design-element="portfolioActivity"],
+    [data-design-element="accountOverview"],
+    [data-design-element="accountActivity"]
+):not(.proto-root *) {
+    display: block;
+    min-width: 0;
+    padding: 20px;
+    background: var(--background-secondary);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 2px rgb(29 29 27 / 4%), 0 6px 24px rgb(29 29 27 / 5%);
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="accountOverview"] > header:not(.proto-root *) {
+    padding: 0;
+    margin: 0;
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="balanceCrypto"]:not(.proto-root *) {
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="balanceFiat"]:not(.proto-root *) {
+    font-size: 18px;
+    color: var(--color-secondary);
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="transactionRow"]:not(.proto-root *) {
+    border-radius: 12px;
+    margin-block: 4px;
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="sidebarAccountRow"]:not(.proto-root *) {
+    min-height: 52px;
+    border-radius: 14px;
+    margin-inline: 12px;
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] :is([data-design-element="accountLayout"], [data-design-element="portfolioLayout"]):not(.proto-root *) {
+    gap: 24px;
+    align-items: start;
+}
+
+@container (min-width: 1080px) {
+    body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="portfolioLayout"]:not([data-design-columns="single"]) > [data-design-element="portfolioActivity"]:not(.proto-root *) {
+        grid-row: 1 / span 3;
+    }
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="accountActionsLayout"] a:not(.proto-root *) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    height: auto;
+    min-width: 56px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-default);
+    font-size: 13px;
+}
+
+body[data-desktop-modernized][data-design-template="calmCards"] [data-design-element="accountActionsLayout"] a > svg:not(.proto-root *) {
+    width: 22px;
+    height: 22px;
+    padding: 16px;
+    box-sizing: content-box;
+    border-radius: 50%;
+    background: var(--background);
+}

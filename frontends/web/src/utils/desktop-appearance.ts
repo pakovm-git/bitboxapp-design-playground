@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
+import { desktopDesignSnapshot, parseDesktopDesign, TDesktopDesign } from './desktop-design';
+
 export type TAppearance = Record<string, string | number>;
 export type TAppearanceMode = 'light' | 'dark';
 export type TAppearanceProfiles = Record<TAppearanceMode, TAppearance>;
@@ -14,6 +16,15 @@ type TField = {
 export const gradientTargets = ['main', 'sidebar', 'guide', 'button', 'card'] as const;
 export const sidebarWidthLimits = { min: 250, max: 600 };
 export const appearanceFields: TField[] = [
+  { id: 'fontFamily', group: 'typography', type: 'select', property: '--font-family', defaults: ['system-ui', 'system-ui'], options: ['system-ui', 'sans-serif', 'monospace'] },
+  { id: 'bodyFontSize', group: 'typography', type: 'number', property: '--size-default', defaults: [16, 16], min: 12, max: 24, unit: 'px' },
+  { id: 'titleFontSize', group: 'typography', type: 'number', property: '--size-header', defaults: [24, 24], min: 18, max: 48, unit: 'px' },
+  { id: 'contentWidth', group: 'layout', type: 'number', property: '--content-width', defaults: [1080, 1080], min: 640, max: 1600, unit: 'px' },
+  { id: 'contentSpacing', group: 'layout', type: 'number', property: '--space-default', defaults: [32, 32], min: 8, max: 64, unit: 'px' },
+  { id: 'rowHeight', group: 'layout', type: 'number', property: '--design-row-height', defaults: [52, 52], min: 36, max: 96, unit: 'px' },
+  { id: 'rowPadding', group: 'layout', type: 'number', property: '--design-row-padding', defaults: [16, 16], min: 0, max: 32, unit: 'px' },
+  { id: 'buttonHeight', group: 'button', type: 'number', property: '--button-height', defaults: [50, 50], min: 32, max: 72, unit: 'px' },
+  { id: 'sidebarIconSize', group: 'sidebar', type: 'number', property: '--sidebar-icon-size', defaults: [24, 24], min: 16, max: 40, unit: 'px' },
   { id: 'background', group: 'palette', type: 'color', property: '--background', defaults: ['#f5f5f5', '#1d1d1b'] },
   { id: 'surface', group: 'palette', type: 'color', property: '--background-secondary', defaults: ['#ffffff', '#333333'] },
   { id: 'text', group: 'palette', type: 'color', property: '--color-default', defaults: ['#1d1d1b', '#f5f5f5'] },
@@ -121,11 +132,11 @@ export const saveAppearanceProfiles = (profiles: TAppearanceProfiles) => {
 export const saveAppearance = (mode: TAppearanceMode, values: TAppearance) =>
   saveAppearanceProfiles(mergeAppearance(readAppearance(), mode, values));
 
-export type TAppearancePreset = { profiles: TAppearanceProfiles };
+export type TAppearancePreset = { profiles: TAppearanceProfiles; design: TDesktopDesign };
 export const presetSizeLimit = 64 * 1024;
 
-export const serializeAppearancePreset = (profiles: TAppearanceProfiles) =>
-  JSON.stringify({ format: 'bitbox-design', version: 1, profiles }, null, 2);
+export const serializeAppearancePreset = (profiles: TAppearanceProfiles, design = desktopDesignSnapshot().design) =>
+  JSON.stringify({ format: 'bitbox-design', version: 2, profiles, design }, null, 2);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === 'object' && !Array.isArray(value);
@@ -135,7 +146,7 @@ export const parseAppearancePreset = (text: string): TAppearancePreset => {
     throw new Error('Preset too large');
   }
   const data: unknown = JSON.parse(text);
-  if (!isRecord(data) || data.format !== 'bitbox-design' || data.version !== 1 || !isRecord(data.profiles) ||
+  if (!isRecord(data) || data.format !== 'bitbox-design' || (data.version !== 1 && data.version !== 2) || !isRecord(data.profiles) ||
       !isRecord(data.profiles.light) || !isRecord(data.profiles.dark)) {
     throw new Error('Invalid preset');
   }
@@ -146,6 +157,7 @@ export const parseAppearancePreset = (text: string): TAppearancePreset => {
   }
   return {
     profiles: mergeAppearance(profiles, 'light', { ...appearancePart(profiles.dark, false), ...profiles.light }),
+    design: data.version === 2 ? parseDesktopDesign(data.design) : { layouts: {}, elements: {} },
   };
 };
 

@@ -91,6 +91,15 @@ it('round-trips design presets and normalizes shared values', () => {
   expect(readAppearance()).toEqual(preset.profiles);
 });
 
+// New presets share layout and element styling, while version-one presets still load without editor overrides.
+it('round-trips editor changes and accepts older appearance-only presets', () => {
+  const profiles = { light: {}, dark: {} };
+  const design = { layouts: {}, elements: { balance: { fontSize: 32 } } };
+  expect(parseAppearancePreset(serializeAppearancePreset(profiles, design)).design).toEqual(design);
+  expect(parseAppearancePreset(JSON.stringify({ format: 'bitbox-design', version: 1, profiles })).design)
+    .toEqual({ layouts: {}, elements: {} });
+});
+
 // Invalid files are rejected as a whole instead of silently discarding fields or executing arbitrary CSS.
 it('rejects malformed, unsupported, oversized and invalid design presets', () => {
   for (const text of ['{broken', 'null', '[]', '{}', ' '.repeat(presetSizeLimit + 1),
