@@ -93,6 +93,7 @@ export const Button = ({
 
   return (
     <button
+      data-design-element="button"
       type={type}
       className={classNames}
       {...props}>

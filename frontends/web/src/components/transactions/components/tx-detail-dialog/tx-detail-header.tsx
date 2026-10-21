@@ -86,7 +86,7 @@ const StatusAndSign = ({
   };
 
   return (
-    <div className={styles.statusContainer}>
+    <div className={styles.statusContainer} data-design-element="transactionStatus">
       <TxStatusDetail
         status={status}
         numConfirmations={numConfirmations}
@@ -111,7 +111,7 @@ const AmountAndDate = ({
   time
 }: AmountAndDateProps) => {
   return (
-    <div className={styles.amountContainer}>
+    <div className={styles.amountContainer} data-design-element="transactionAmount">
       <span className={styles.amount}>
         {amountSign}<AmountWithUnit amount={amount} unitClassName={styles.headerAmountUnit} />
       </span>

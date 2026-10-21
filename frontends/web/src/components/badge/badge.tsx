@@ -22,6 +22,7 @@ export const Badge = ({
   const iconOnlyStyle = (children === undefined && icon) ? style.iconOnly : '';
   return (
     <span
+      data-design-element="badge"
       className={`
         ${style.badge || ''}
         ${style[type] || ''}

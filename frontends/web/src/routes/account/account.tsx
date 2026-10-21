@@ -8,6 +8,7 @@ import { statusChanged, syncAddressesCount, syncdone, transactionsChanged } from
 import { getMarketVendors, MarketVendors } from '@/api/market';
 import { useAppState } from '@/contexts/app-state-context';
 import { Balance } from '@/components/balance/balance';
+import { DesignLayout } from '@/components/desktop-design/design-layout';
 import { HeadersSync } from '@/components/headerssync/headerssync';
 import { InfoBlue, LoupeBlue } from '@/components/icon';
 import { GuidedContent, GuideWrapper, Header, Main } from '@/components/layout';
@@ -257,6 +258,7 @@ const RemountAccount = ({
             </A>
           </Dialog>
           <Header
+            designEditable
             title={<><span>{account.name}</span>{insured && (<Insured code={code} />)}</>}>
             <Link
               to={`/account/${code}/info`}
@@ -272,94 +274,98 @@ const RemountAccount = ({
           {status !== undefined && status.synced && hasDataLoaded && isBitcoinBased(account.coinCode) && (
             <HeadersSync coinCode={account.coinCode} />
           )}
-          <View>
-            <ViewHeader>
-              <div className={style.balanceHeader}>
-                <Balance balance={balance} className={style.fadeIn} />
-                {!isAccountEmpty && <ActionButtons {...actionButtonsProps} />}
-              </div>
-            </ViewHeader>
-            <ViewContent>
-              {loadingTransactions ? (
-                <TransactionHistorySkeleton />
-              ) : (
-                <div className={style.fadeIn}>
-                  <div className={style.accountHeader}>
-                    {isAccountEmpty && (
-                      <BuyReceiveCTA
-                        account={account}
-                        code={code}
-                        unit={balance.available.unit}
-                        balanceList={[balance]}
-                      />
-                    )}
+          <View designEditable>
+            <DesignLayout id="account" items={[
+              { id: 'accountOverview', content: <ViewHeader>
+                <div className={style.balanceHeader}>
+                  <DesignLayout id="accountOverview" items={[
+                    { id: 'balance', content: <Balance balance={balance} className={style.fadeIn} /> },
+                    { id: 'accountActions', content: !isAccountEmpty && <ActionButtons {...actionButtonsProps} /> },
+                  ]} />
+                </div>
+              </ViewHeader> },
+              { id: 'accountActivity', content: <ViewContent>
+                {loadingTransactions ? (
+                  <TransactionHistorySkeleton />
+                ) : (
+                  <div className={style.fadeIn}>
+                    <div className={style.accountHeader}>
+                      {isAccountEmpty && (
+                        <BuyReceiveCTA
+                          account={account}
+                          code={code}
+                          unit={balance.available.unit}
+                          balanceList={[balance]}
+                        />
+                      )}
 
-                    {transactions?.success === false ? (
-                      <p className={style.errorLoadTransactions}>
-                        {t('transactions.errorLoadTransactions')}
-                      </p>
-                    ) : !isAccountEmpty && (
-                      <>
-                        <div className={style.titleRow}>
-                          <SubTitle className={style.titleWithButton}>
-                            {t('accountSummary.transactionHistory')}
-                          </SubTitle>
+                      {transactions?.success === false ? (
+                        <p className={style.errorLoadTransactions}>
+                          {t('transactions.errorLoadTransactions')}
+                        </p>
+                      ) : !isAccountEmpty && (
+                        <>
+                          <div className={style.titleRow}>
+                            <SubTitle className={style.titleWithButton}>
+                              {t('accountSummary.transactionHistory')}
+                            </SubTitle>
 
-                          <Button
-                            className={style.searchButton}
-                            transparent
-                            disabled={!hasTransactions}
-                            onClick={() => {
-                              if (showSearchBar) {
-                                setShowSearchBar(false);
-                                setSearchTerm('');
-                              } else {
-                                setShowSearchBar(true);
-                              }
-                            }}
-                          >
-                            {showSearchBar ? (
-                              <>✕ {t('generic.close')}</>
-                            ) : (
-                              <>
-                                <LoupeBlue className={style.loupe} />
-                                {t('generic.searchButton')}
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                            <Button
+                              className={style.searchButton}
+                              transparent
+                              disabled={!hasTransactions}
+                              onClick={() => {
+                                if (showSearchBar) {
+                                  setShowSearchBar(false);
+                                  setSearchTerm('');
+                                } else {
+                                  setShowSearchBar(true);
+                                }
+                              }}
+                            >
+                              {showSearchBar ? (
+                                <>✕ {t('generic.close')}</>
+                              ) : (
+                                <>
+                                  <LoupeBlue className={style.loupe} />
+                                  {t('generic.searchButton')}
+                                </>
+                              )}
+                            </Button>
+                          </div>
 
-                        <div className={`
+                          <div className={`
                           ${style.searchContainer || ''}
                           ${!showSearchBar && style.searchHidden || ''}
                         `}>
-                          <SearchInput
-                            ref={searchInputRef}
-                            placeholder={t('accountSummary.searchPlaceholder')}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.currentTarget.value)}
-                          />
-                        </div>
-                      </>
-                    )}
+                            <SearchInput
+                              ref={searchInputRef}
+                              placeholder={t('accountSummary.searchPlaceholder')}
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.currentTarget.value)}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    <TransactionList
+                      transactionSuccess={transactions?.success ?? false}
+                      filteredTransactions={filteredTransactions}
+                      debouncedSearchTerm={debouncedSearchTerm}
+                      onShowDetail={setDetailID}
+                    />
                   </div>
+                )}
 
-                  <TransactionList
-                    transactionSuccess={transactions?.success ?? false}
-                    filteredTransactions={filteredTransactions}
-                    debouncedSearchTerm={debouncedSearchTerm}
-                    onShowDetail={setDetailID}
-                  />
-                </div>
-              )}
-
-              <TransactionDetails
-                accountCode={code}
-                explorerURL={account.blockExplorerTxPrefix}
-                internalID={detailID}
-                onClose={() => setDetailID(null)}
-              />
-            </ViewContent>
+                <TransactionDetails
+                  accountCode={code}
+                  explorerURL={account.blockExplorerTxPrefix}
+                  internalID={detailID}
+                  onClose={() => setDetailID(null)}
+                />
+              </ViewContent> },
+            ]} />
           </View>
         </Main>
       </GuidedContent>

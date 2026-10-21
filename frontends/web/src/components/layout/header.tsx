@@ -12,6 +12,7 @@ import style from './header.module.css';
 
 type TProps = {
   title?: ReactNode;
+  designEditable?: boolean;
 } & ({
   // Page headings stay large and left-aligned on mobile.
   variant?: 'page';
@@ -73,6 +74,7 @@ const HeaderBackButton = ({ onBack }: Pick<TProps, 'onBack'>) => {
 
 export const Header = ({
   title,
+  designEditable = false,
   desktopTitle = title,
   hideSidebarToggler,
   mobileBackButton = false,
@@ -97,7 +99,7 @@ export const Header = ({
       ${style.container || ''}
       ${variant === 'page' && style.page || ''}
       ${variant === 'fullscreen' && style.fullscreen || ''}
-    `} data-window-header>
+    `} data-window-header data-design-scope={designEditable || undefined} data-design-element={designEditable ? 'pageHeader' : undefined}>
       <div className={style.header} data-window-titlebar data-window-frame-surface>
         {variant !== 'fullscreen' && (
           <div
@@ -119,7 +121,7 @@ export const Header = ({
           </div>
         )}
         {/* Keep the desktop spacer even when there is no title. */}
-        <div className={style.title}>
+        <div className={style.title} data-design-element={designEditable ? 'pageTitle' : undefined}>
           {variant !== 'fullscreen' && desktopTitle !== undefined && desktopTitle !== null && (
             <h2 className={style.desktopTitle}>{desktopTitle}</h2>
           )}
@@ -128,7 +130,7 @@ export const Header = ({
           )}
         </div>
         {variant !== 'fullscreen' && (
-          <div className={style.children}>
+          <div className={style.children} data-design-element={designEditable ? 'headerActions' : undefined}>
             {children}
             {guideExists && (
               <Button

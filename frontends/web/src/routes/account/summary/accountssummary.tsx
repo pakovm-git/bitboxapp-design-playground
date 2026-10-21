@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useState, useEffect, useRef, useCallback, useContext } from 'react';
+import { useDesktopDesign } from '@/hooks/desktop-design';
+import { useDesktopModernized } from '@/components/desktop-chrome/desktop-chrome';
+import { PortfolioActivity } from '@/components/desktop-design/calm-cards/portfolio-activity';
 import { useTranslation } from 'react-i18next';
 import * as accountApi from '@/api/account';
 import { statusChanged, syncdone } from '@/api/accountsync';
@@ -14,6 +17,7 @@ import { useLightning } from '@/hooks/lightning';
 import { GuideWrapper, GuidedContent, Header, Main } from '@/components/layout';
 import { View } from '@/components/view/view';
 import { Chart } from './chart';
+import { DesignLayout } from '@/components/desktop-design/design-layout';
 import { KeystoreBalance } from './keystorebalance';
 import { TotalBalanceForAllKeystores } from './total-balance-for-all-keystores';
 import { AddBuyReceiveOnEmptyBalances } from '@/routes/account/info/buy-receive-cta';
@@ -35,6 +39,8 @@ export type Balances = {
 };
 
 export const AccountsSummary = () => {
+  const { design } = useDesktopDesign();
+  const calmCards = useDesktopModernized() && design.template === 'calmCards';
   const { t } = useTranslation();
 
   const {
@@ -277,30 +283,31 @@ export const AccountsSummary = () => {
               />
             ))}
           </ContentWrapper>
-          <Header title={t('accountSummary.title')}>
+          <Header title={t('accountSummary.title')} designEditable>
             <HideAmountsButton />
           </Header>
-          <View>
-            <Chart
-              className={chartData ? style.fadeIn : ''}
-              hideAmounts={hideAmounts}
-              data={chartData}
-              noDataPlaceholder={
-                (hasAccounts && activeAccounts.length <= Object.keys(balances || {}).length) ? (
-                  <AddBuyReceiveOnEmptyBalances balances={balances} />
-                ) : undefined
-              } />
-            <div className={style.keystoresContainer} data-testid="account-summary-keystores">
-              {showTotalBalance && (
-                <TotalBalanceForAllKeystores
-                  hideHeader={hasOnlyLightningAccount}
-                  hideLightningUnitPrice={hasActiveBitcoinAccount}
-                  lightningSDKStatus={lightningSDKStatus}
-                  summaryData={chartData}
-                  coinsBalances={coinsTotalBalance}
-                />
-              )}
-              {accountsByKeystore &&
+          <View designEditable>
+            <DesignLayout id="portfolio" items={[
+              { id: 'portfolioChart', content: <Chart
+                className={chartData ? style.fadeIn : ''}
+                hideAmounts={hideAmounts}
+                data={chartData}
+                noDataPlaceholder={
+                  (hasAccounts && activeAccounts.length <= Object.keys(balances || {}).length) ? (
+                    <AddBuyReceiveOnEmptyBalances balances={balances} />
+                  ) : undefined
+                } /> },
+              { id: 'portfolioAssets', content: <div className={style.keystoresContainer} data-testid="account-summary-keystores">
+                {showTotalBalance && (
+                  <TotalBalanceForAllKeystores
+                    hideHeader={hasOnlyLightningAccount}
+                    hideLightningUnitPrice={hasActiveBitcoinAccount}
+                    lightningSDKStatus={lightningSDKStatus}
+                    summaryData={chartData}
+                    coinsBalances={coinsTotalBalance}
+                  />
+                )}
+                {accountsByKeystore &&
               (accountsByKeystore.map(({ keystore, accounts }) =>
                 (
                   <KeystoreBalance
@@ -314,8 +321,9 @@ export const AccountsSummary = () => {
                   />
                 )
               ))}
-            </div>
-
+              </div> },
+              ...(calmCards ? [{ id: 'portfolioActivity', content: <PortfolioActivity accounts={activeAccounts} /> }] : []),
+            ]} />
           </View>
         </Main>
       </GuidedContent>

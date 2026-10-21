@@ -50,6 +50,10 @@
     padding: var(--space-half) 0;
     width: 100%;
 }
+
+:global(body[data-desktop-modernized]) .inner[data-design-view] {
+    container-type: inline-size;
+}
 .verticallyCentered .inner {
     margin-bottom: auto;
     margin-top: auto;

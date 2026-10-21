@@ -5,6 +5,7 @@ import { TBalance } from '@/api/account';
 import { BalanceSkeleton } from '@/components/balance/balance-skeleton';
 import { AmountWithUnit } from '@/components/amount/amount-with-unit';
 import { SubTitle } from '@/components/title';
+import { DesignLayout } from '@/components/desktop-design/design-layout';
 import style from './balance.module.css';
 
 type TProps = {
@@ -25,7 +26,7 @@ export const Balance = ({
         <SubTitle className={style.availableBalanceTitle}>
           {t('accountSummary.availableBalance')}
         </SubTitle>
-        <div className={style.balance} data-testid="availableBalance">
+        <div className={style.balance} data-testid="availableBalance" data-design-element="balanceAmount">
           ---
         </div>
       </header>
@@ -42,23 +43,24 @@ export const Balance = ({
       <SubTitle className={style.availableBalanceTitle}>
         {t('accountSummary.availableBalance')}
       </SubTitle>
-      <div className={style.balance} data-testid="availableBalance">
-        <AmountWithUnit
-          amount={balance.available}
-          maxDecimals={9}
-          enableRotateUnit
-          unitClassName={style.unit}
-        />
-        {' '}
-        <AmountWithUnit
-          amount={balance.available}
-          enableRotateUnit
-          unitClassName={style.unit}
-          convertToFiat
-        />
+      <div className={style.balance} data-testid="availableBalance" data-design-element="balanceAmount">
+        <DesignLayout id="balanceAmount" items={[
+          { id: 'balanceCrypto', content: <AmountWithUnit
+            amount={balance.available}
+            maxDecimals={9}
+            enableRotateUnit
+            unitClassName={style.unit}
+          /> },
+          { id: 'balanceFiat', content: <>{' '}<AmountWithUnit
+            amount={balance.available}
+            enableRotateUnit
+            unitClassName={style.unit}
+            convertToFiat
+          /></> },
+        ]} />
       </div>
       {balance.hasIncoming && (
-        <p className={style.pendingBalance}>
+        <p className={style.pendingBalance} data-design-element="balanceIncoming">
           {t('account.incoming')}
           {' '}
           <span

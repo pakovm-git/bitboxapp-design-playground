@@ -15,7 +15,8 @@ vi.mock('@/hooks/mediaquery', () => ({
   useMediaQuery: vi.fn().mockReturnValue(true)
 }));
 
-vi.mock('react', () => ({
+vi.mock('react', async importOriginal => ({
+  ...await importOriginal<typeof import('react')>(),
   useMemo: vi.fn().mockImplementation((fn) => fn()),
   useContext: vi.fn(),
   createContext: vi.fn()

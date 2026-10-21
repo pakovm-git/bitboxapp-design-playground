@@ -10,6 +10,7 @@ import { UseBackButton } from '@/hooks/backbutton';
 import style from './view.module.css';
 
 type TViewProps = {
+  designEditable?: boolean;
   dialog?: boolean;
   fitContent?: boolean;
   fullscreen?: boolean;
@@ -39,6 +40,7 @@ type TViewProps = {
  * @param withMobileSafetyMargin adds a small horizontal inset on mobile
  */
 export const View = ({
+  designEditable = false,
   dialog = false,
   fitContent = false,
   fullscreen,
@@ -75,6 +77,7 @@ export const View = ({
     <div className={containerClasses} data-window-no-drag-overlay={dialog || undefined}>
       <div
         className={classNames}
+        data-design-view={designEditable || undefined}
         style={inlineStyles}>
         {children}
       </div>

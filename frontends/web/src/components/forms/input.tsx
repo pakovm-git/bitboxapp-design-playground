@@ -49,6 +49,7 @@ export const Input = forwardRef<HTMLInputElement, TInputProps>(({
         ${classNameInputField}
       `}>
         <input
+          data-design-element="input"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}

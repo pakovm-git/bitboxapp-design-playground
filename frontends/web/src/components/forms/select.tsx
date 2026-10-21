@@ -23,7 +23,7 @@ export const Select = ({
   return (
     <div className={styles.select}>
       {label && <label htmlFor={id}>{label}</label>}
-      <select id={id} {...props}>
+      <select data-design-element="select" id={id} {...props}>
         {options.map(({ value, text, disabled = false }) => (
           <option
             key={String(value)}

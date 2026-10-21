@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TTransaction, TAmountWithConversions, getTransaction, TTransactionStatus, TTransactionType } from '@/api/account';
 import { Dialog } from '@/components/dialog/dialog';
+import { DesignLayout } from '@/components/desktop-design/design-layout';
 import { Note } from './note';
 import { AmountWithUnit } from '@/components/amount/amount-with-unit';
 import { getTxSignForTxDetail } from '@/utils/transaction';
@@ -81,85 +82,81 @@ export const TxDetailsDialog = ({
       medium>
       {transactionInfo && (
         <div className={styles.container} data-testid="tx-details-container" >
-          <TxDetailHeader
-            status={status}
-            numConfirmations={numConfirmations}
-            numConfirmationsComplete={numConfirmationsComplete}
-            type={type}
-            amount={amount}
-            transactionInfo={transactionInfo}
-            time={time}
-            amountSign={amountSign}
-            amountAtTimeSign={amountAtTimeSign}
-          />
+          <DesignLayout id="transaction" items={[
+            { id: 'transactionSummary', content: <><TxDetailHeader
+              status={status}
+              numConfirmations={numConfirmations}
+              numConfirmationsComplete={numConfirmationsComplete}
+              type={type}
+              amount={amount}
+              transactionInfo={transactionInfo}
+              time={time}
+              amountSign={amountSign}
+              amountAtTimeSign={amountAtTimeSign}
+            />
 
-          <hr className={styles.separator} />
+            <hr className={styles.separator} /></> },
 
-          <Note
-            accountCode={accountCode}
-            internalID={internalID}
-            note={note}
-          />
+            { id: 'transactionNote', content: <Note
+              accountCode={accountCode}
+              internalID={internalID}
+              note={note}
+            /> },
 
-          {/* to or send address */}
-          <TxDetailRow>
-            <p className={styles.label}>{t('send.confirm.to')}</p>
-            <AddressOrTxId values={transactionInfo.addresses} />
-          </TxDetailRow>
+            { id: 'transactionAddress', content: <TxDetailRow>
+              <p className={styles.label}>{t('send.confirm.to')}</p>
+              <AddressOrTxId values={transactionInfo.addresses} />
+            </TxDetailRow> },
 
-          {/* fee */}
-          <TxDetailRow>
-            <p className={styles.label}>{t('transaction.fee')}</p>
-            <span><AmountWithUnit amount={transactionInfo.fee} unitClassName={styles.rowUnit} /></span>
-          </TxDetailRow>
+            { id: 'transactionFee', content: <TxDetailRow>
+              <p className={styles.label}>{t('transaction.fee')}</p>
+              <span><AmountWithUnit amount={transactionInfo.fee} unitClassName={styles.rowUnit} /></span>
+            </TxDetailRow> },
 
 
-          {/* historical value */}
-          {transactionInfo.amountAtTime?.estimated === false && (
-            <TxDetailRow>
+            { id: 'transactionHistorical', content: transactionInfo.amountAtTime?.estimated === false && (
+              <TxDetailRow>
+                <div>
+                  <p className={styles.label}>{t('transaction.details.historicalValue')}</p>
+                </div>
+                <span>
+                  <AmountWithUnit
+                    amount={transactionInfo.amountAtTime}
+                    convertToFiat
+                    unitClassName={styles.rowUnit}
+                  />
+                </span>
+              </TxDetailRow>
+            ) },
+
+
+            { id: 'transactionCurrent', content: <TxDetailRow>
               <div>
-                <p className={styles.label}>{t('transaction.details.historicalValue')}</p>
+                <p className={styles.label}>{t('transaction.details.currentValue')}</p>
               </div>
               <span>
                 <AmountWithUnit
-                  amount={transactionInfo.amountAtTime}
+                  amount={amount}
                   convertToFiat
                   unitClassName={styles.rowUnit}
                 />
               </span>
-            </TxDetailRow>
-          )}
+            </TxDetailRow> },
 
-
-          {/* current value */}
-          <TxDetailRow>
-            <div>
-              <p className={styles.label}>{t('transaction.details.currentValue')}</p>
-            </div>
-            <span>
-              <AmountWithUnit
-                amount={amount}
-                convertToFiat
-                unitClassName={styles.rowUnit}
-              />
-            </span>
-          </TxDetailRow>
-
-          {/* tx id */}
-          <TxDetailRow>
-            <p className={`
+            { id: 'transactionId', content: <TxDetailRow>
+              <p className={`
               ${styles.label || ''}
               ${styles.nowrap || ''}
             `}>{t('transaction.explorer')}</p>
-            <AddressOrTxId values={[transactionInfo.internalID]} />
-          </TxDetailRow>
+              <AddressOrTxId values={[transactionInfo.internalID]} />
+            </TxDetailRow> },
 
-          <AdvancedTxDetail transactionInfo={transactionInfo} />
+            { id: 'transactionAdvanced', content: <AdvancedTxDetail transactionInfo={transactionInfo} /> },
 
-          {/* explorer link */}
-          <div className={styles.explorerLinkContainer}>
-            <ExplorerLink href={explorerURL + transactionInfo.txID} />
-          </div>
+            { id: 'transactionExplorer', content: <div className={styles.explorerLinkContainer}>
+              <ExplorerLink href={explorerURL + transactionInfo.txID} />
+            </div> },
+          ]} />
         </div>
 
       )}

@@ -10,6 +10,7 @@ import { AmountWithUnit } from '../amount/amount-with-unit';
 import { ConversionAmount } from '@/components/amount/conversion-amount';
 import { Arrow } from './components/arrows';
 import { getTxSign } from '@/utils/transaction';
+import { DesignLayout } from '@/components/desktop-design/design-layout';
 import styles from './transaction.module.css';
 
 type TTransactionProps = TTransaction & {
@@ -35,6 +36,7 @@ export const Transaction = ({
   time,
   type,
 }: TTransactionProps) => {
+  const { t } = useTranslation();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
@@ -45,35 +47,38 @@ export const Transaction = ({
         }
       }}
     >
-      <div className={styles.txContent} data-testid="transaction" data-tx-type={type}>
-        <span className={styles.txIcon}>
-          <Arrow status={status} type={type} />
-        </span>
-        <Status
-          addresses={addresses}
-          amount={amountAtTime}
-          note={note}
-          numConfirmations={numConfirmations}
-          numConfirmationsComplete={numConfirmationsComplete}
-          status={status}
-          statusProgress={statusProgress}
-          statusText={statusText}
-          statusTextShort={statusTextShort}
-          time={time}
-          type={type}
-        />
-        <Amounts
-          amount={amountAtTime}
-          deductedAmount={deductedAmountAtTime}
-          type={type}
-        />
-        <button
-          className={styles.txShowDetailBtn}
-          onClick={() => !isMobile && onShowDetail(internalID)}
-          type="button"
-          data-testid="tx-details-button">
-          <Loupe className={styles.iconLoupe} data-testid="tx-details"/>
-        </button>
+      <div className={styles.txContent} data-testid="transaction" data-tx-type={type} data-design-element="transactionRow">
+        <DesignLayout id="transactionRow" items={[
+          { id: 'transactionIcon', content: <span className={styles.txIcon}>
+            <Arrow status={status} type={type} />
+          </span> },
+          { id: 'transactionInfo', content: <Status
+            addresses={addresses}
+            amount={amountAtTime}
+            note={note}
+            numConfirmations={numConfirmations}
+            numConfirmationsComplete={numConfirmationsComplete}
+            status={status}
+            statusProgress={statusProgress}
+            statusText={statusText}
+            statusTextShort={statusTextShort}
+            time={time}
+            type={type}
+          /> },
+          { id: 'transactionAmounts', content: <Amounts
+            amount={amountAtTime}
+            deductedAmount={deductedAmountAtTime}
+            type={type}
+          /> },
+          { id: 'transactionDetailsButton', content: <button
+            className={styles.txShowDetailBtn}
+            onClick={() => !isMobile && onShowDetail(internalID)}
+            type="button"
+            aria-label={t('transaction.details.title')}
+            data-testid="tx-details-button">
+            <Loupe className={styles.iconLoupe} data-testid="tx-details"/>
+          </button> },
+        ]} />
       </div>
     </section>
   );

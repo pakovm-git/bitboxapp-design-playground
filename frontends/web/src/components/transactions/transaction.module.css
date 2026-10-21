@@ -15,13 +15,14 @@
   border-radius: var(--radius-xl);
   display: flex;
   justify-content: space-between;
-  padding: var(--space-half) 0;
+  padding: var(--design-row-padding, var(--space-half)) 0;
+  min-height: var(--design-row-height, 0);
   transition: background-color 120ms ease;
 }
 
 @media (max-width: 768px) {
   .txContent {
-    padding: 10px 0 8px 0;
+    padding: var(--design-row-padding, 10px) 0 var(--design-row-padding, 8px) 0;
   }
 }
 

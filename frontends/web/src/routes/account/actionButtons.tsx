@@ -9,8 +9,12 @@ import { AccountCode, TAccount, CoinCode } from '@/api/account';
 import { isEthereumBased } from '@/utils/coin';
 import { AccountActionButtonLink } from './components/account-action-button-link';
 import { AccountActionButtons } from './components/account-action-buttons';
+import { DesignLayout } from '@/components/desktop-design/design-layout';
 import { FirmwareUpgradeRequiredDialog } from '@/components/dialog/firmware-upgrade-required-dialog';
 import { useFeatureConnect } from '@/hooks/keystore';
+import { useDesktopDesign } from '@/hooks/desktop-design';
+import { useDesktopModernized } from '@/components/desktop-chrome/desktop-chrome';
+import { Icon } from '@/components/desktop-design/calm-cards/kit/icon';
 import style from './account.module.css';
 
 type TProps = {
@@ -24,6 +28,8 @@ type TProps = {
 
 export const ActionButtons = ({ canSend, code, coinCode, exchangeSupported, account, accountDataLoaded }: TProps) => {
   const { t } = useTranslation();
+  const { design } = useDesktopDesign();
+  const calmCards = useDesktopModernized() && design.template === 'calmCards';
   const navigate = useNavigate();
   const {
     connect,
@@ -55,45 +61,47 @@ export const ActionButtons = ({ canSend, code, coinCode, exchangeSupported, acco
 
   return (
     <AccountActionButtons withWalletConnect={walletConnectEnabled}>
-      <AccountActionButtonLink
-        disabled={!canClickSend}
-        to={sendLink}
-        onClick={routeSend}
-      >
-        <ArrowFloorUpWhite width={16} height={16} />
-        <span>{t('generic.send')}</span>
-      </AccountActionButtonLink>
-
-      <AccountActionButtonLink
-        disabled={!accountDataLoaded}
-        to={`/account/${code}/receive`}
-      >
-        <ArrowFloorDownWhite width={16} height={16} />
-        <span data-testid="receive-button">{t('generic.receiveWithoutCoinCode')}</span>
-      </AccountActionButtonLink>
-
-      {(exchangeSupported && !isMobile) && (
-        <AccountActionButtonLink
-          disabled={!accountDataLoaded}
-          to={`/market/select/${code}`}
+      <DesignLayout id="accountActions" items={[
+        { id: 'sendAction', content: <AccountActionButtonLink
+          disabled={!canClickSend}
+          to={sendLink}
+          onClick={routeSend}
         >
-          <Coins width={17} height={17} />
-          <span>{t('generic.buySell')}</span>
-        </AccountActionButtonLink>
-      )}
+          {calmCards ? <Icon name="send" /> : <ArrowFloorUpWhite width={16} height={16} />}
+          <span>{t('generic.send')}</span>
+        </AccountActionButtonLink> },
 
-      {walletConnectEnabled && (
-        <AccountActionButtonLink
+        { id: 'receiveAction', content: <AccountActionButtonLink
           disabled={!accountDataLoaded}
-          to={`/account/${code}/wallet-connect/dashboard`}
+          to={`/account/${code}/receive`}
         >
-          <WalletConnectLight className={style.iconWalletConnect}/>
-          {' '}
-          {!isLargeTablet && (
-            <span>Wallet Connect</span>
-          )}
-        </AccountActionButtonLink>
-      )}
+          {calmCards ? <Icon name="receive" /> : <ArrowFloorDownWhite width={16} height={16} />}
+          <span data-testid="receive-button">{t('generic.receiveWithoutCoinCode')}</span>
+        </AccountActionButtonLink> },
+
+        { id: 'buyAction', content: (exchangeSupported && !isMobile) && (
+          <AccountActionButtonLink
+            disabled={!accountDataLoaded}
+            to={`/market/select/${code}`}
+          >
+            {calmCards ? <Icon name="buy" /> : <Coins width={17} height={17} />}
+            <span>{t('generic.buySell')}</span>
+          </AccountActionButtonLink>
+        ) },
+
+        { id: 'walletConnectAction', content: walletConnectEnabled && (
+          <AccountActionButtonLink
+            disabled={!accountDataLoaded}
+            to={`/account/${code}/wallet-connect/dashboard`}
+          >
+            {calmCards ? <Icon name="wallet" /> : <WalletConnectLight className={style.iconWalletConnect}/>}
+            {' '}
+            {!isLargeTablet && (
+              <span>Wallet Connect</span>
+            )}
+          </AccountActionButtonLink>
+        ) },
+      ]} />
       {firmwareUpgradeRequired && (
         <FirmwareUpgradeRequiredDialog
           open
